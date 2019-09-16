@@ -41,7 +41,7 @@ paths:
         format: ISO9601      
       - in: query
         name: ecommerce
-        description: irme true se quiser somente os itens de ecommerce
+        description: informe true se quiser somente os itens de ecommerce
         default: false
         type: boolean
         format: int32
@@ -150,7 +150,7 @@ definitions:
       dep_codigo:
         type: integer
         format: int32
-        example: 30
+        example: 1
       estoque:
         type: number
         format: float
