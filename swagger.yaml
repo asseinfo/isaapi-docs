@@ -15,14 +15,14 @@ tags:
   description: Chamadas para operações de estoque
 
 paths:
-  /api/v1/estoque:
+  /api/v1/estoqu:
     get:
       tags:
-      - Estoque a partir da data informada
+      - Estoque
       summary: retorna a quantidade em estoque
       operationId: searchInventory
       description: |
-        Neste endpoint você irá receber os saldos de estoque que sofreram alteração desde a data/hora informada
+        Neste endpoint você irá consultar os saldos de estoque que sofreram alteração desde a data/hora informada
       produces:
       - application/json
       parameters:
@@ -70,11 +70,11 @@ paths:
   /api/v1/estoque/{idDoProduto}:
     get:
       tags:
-      - Estoque de um produto identificado pelo seu código de identificação
+      - Estoque
       summary: retorna a quantidade em estoque
       operationId: searchInventoryID
       description: |
-        Neste endpoint você irá receber o saldo em estoque do produto solicitado
+        Neste endpoint você irá consultar o saldo em estoque do produto solicitado
       produces:
       - application/json
       parameters:
