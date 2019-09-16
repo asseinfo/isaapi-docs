@@ -104,6 +104,51 @@ paths:
           description: Quando o registro não foi encontrado
           schema:
             $ref: '#/definitions/RecordNotFound'
+  
+  /api/v1/produtos:
+    get:
+      tags:
+      - Produtos identificados pelos seus códigos de identificação
+      summary: retorna os produtos
+      operationId: searchProducts
+      description: Neste endpoint você irá receber uma lista de produtos 
+      produces:
+      - application/json
+      parameters:
+      - in: header
+        name: X-TOKEN-API-KEY
+        type: string
+        minLength: 64
+        maxLength: 64
+        description: token de identificação do usuário (SHA256)
+        required: true
+      - in: query
+        name: pagina
+        description: Número dá página
+        type: integer
+        format: int32      
+        minimum: 1
+      - in: query
+        name: limite
+        description: quantidade máxima que pode ser retornada
+        type: integer
+        format: int32
+        minimum: 1
+        maximum: 200
+      responses:
+        200:
+          description: search results matching criteria
+          schema:
+            $ref: '#/definitions/ProductItem'
+        401:
+          description: X-TOKEN-API-KEY inválido
+          schema:
+            $ref: '#/definitions/AuthenticationError'
+        422:
+          description: search results matching criteria
+          schema:
+            $ref: '#/definitions/InvalidPage'
+
 definitions:
   InvalidValue:
     type: object
@@ -172,3 +217,72 @@ definitions:
         items:
           type: string
           example: Você precisa informar um X-TOKEN-API-KEY válido
+  ProductItem:
+    type: object
+    properties:
+      meta:
+        $ref: '#/definitions/MetaInfo'
+      produtos:
+        type: array
+        items:
+          $ref: '#/definitions/ProductProperties'
+  ProductProperties:
+    type: object
+    properties:
+      prod_codigo:
+        type: integer
+        format: int32
+        example: 30
+      prod_referencia:
+        type: string
+        example: 30
+      dep_codigo:
+        type: integer
+        format: int32
+        example: 30
+      prod_nome:
+        type: string
+        example: Camiseta lisa
+      preco:
+        type: number
+        format: float
+        example: 49.99
+      marc_nome: 
+        type: string
+        example: DZARM
+      fab_nome: 
+        type: string
+        example: Hering
+      prod_pesobruto: 
+        type: number
+        format: float
+        example: 0.250
+      prod_pesoliquido:
+        type: number
+        format: float
+        example: 0.150
+      tip_nome: 
+        type: string
+        example: VERÃO 2019/2020
+      prod_alt_tempo: 
+        type: string
+        format: ISO9601      
+        example: 2019-09-16T12:06:00.000Z
+  InvalidPage:
+    type: object
+    properties:
+      errors:
+        type: array
+        items:
+          type: object
+          properties:
+            msg:
+              type: string
+              example: "Invalid page"
+            param:
+              type: string
+              example: "pagina"
+            location:
+              type: string
+              example: "body"
+
