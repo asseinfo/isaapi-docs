@@ -62,7 +62,13 @@ paths:
         200:
           description: search results matching criteria
           schema:
-            $ref: '#/definitions/StockItem'
+            type: object
+            properties:
+              meta:
+                $ref: '#/definitions/MetaInfo'
+              produtos:
+                $ref: '#/definitions/StockProperties'
+            
         422:
           description: search results matching criteria
           schema:
@@ -95,7 +101,14 @@ paths:
         200:
           description: search results matching criteria
           schema:
-            $ref: '#/definitions/StockItem'
+            type: object
+            properties:
+              meta:
+                $ref: '#/definitions/MetaInfo'
+              produtos:
+                type: array
+                items:
+                  $ref: '#/definitions/StockProperties'
         401:
           description: X-TOKEN-API-KEY inválido
           schema:
@@ -128,15 +141,6 @@ definitions:
       error:
         type: string
         example: ''
-  StockItem:
-    type: object
-    properties:
-      meta:
-        $ref: '#/definitions/MetaInfo'
-      produtos:
-        type: array
-        items:
-          $ref: '#/definitions/StockProperties'
   StockProperties:
     type: object
     properties:
@@ -163,7 +167,7 @@ definitions:
         example: 1
       itensPorPagina:
         type: integer
-        example: 1
+        example: 20
   AuthenticationError:
     type: object
     properties:
