@@ -1,0 +1,174 @@
+swagger: '2.0'
+info:
+  description: API para integrar o ISA-ERP com o mundo
+  version: 1.0.0
+  title: ISA-API
+  contact:
+    email: altair@asseinfo.com.br
+
+  license:
+    name: Apache 2.0
+    url: http://www.apache.org/licenses/LICENSE-2.0.html
+
+tags:
+- name: Estoque
+  description: Chamadas para operações de estoque
+
+paths:
+  /api/v1/estoque:
+    get:
+      tags:
+      - Estoque a partir da data informada
+      summary: retorna a quantidade em estoque
+      operationId: searchInventory
+      description: |
+        Neste endpoint você irá receber os saldos de estoque que sofreram alteração desde a data/hora informada
+      produces:
+      - application/json
+      parameters:
+      - in: header
+        name: X-TOKEN-API-KEY
+        type: string
+        minLength: 64
+        maxLength: 64
+        description: token de identificação do usuário (SHA256)
+        required: true
+      - in: query
+        name: desde
+        description: data no formato padrão do JSON (ISO9601)
+        required: true
+        type: string
+        format: ISO9601      
+      - in: query
+        name: ecommerce
+        description: irme true se quiser somente os itens de ecommerce
+        default: false
+        type: boolean
+        format: int32
+        minimum: 0
+      - in: query
+        name: limite
+        description: quantidade máxima que pode ser retornada
+        type: integer
+        format: int32
+        minimum: 0
+        maximum: 200
+      - in: query
+        name: pagina
+        description: número da página
+        type: integer
+        format: int32
+      responses:
+        200:
+          description: search results matching criteria
+          schema:
+            $ref: '#/definitions/StockItem'
+        422:
+          description: search results matching criteria
+          schema:
+            $ref: '#/definitions/InvalidValue'
+  /api/v1/estoque/{idDoProduto}:
+    get:
+      tags:
+      - Estoque de um produto identificado pelo seu código de identificação
+      summary: retorna a quantidade em estoque
+      operationId: searchInventoryID
+      description: |
+        Neste endpoint você irá receber o saldo em estoque do produto solicitado
+      produces:
+      - application/json
+      parameters:
+      - in: header
+        name: X-TOKEN-API-KEY
+        type: string
+        minLength: 64
+        maxLength: 64
+        description: token de identificação do usuário (SHA256)
+        required: true
+      - in: path
+        name: idDoProduto
+        required: true
+        type: integer
+        format: int32
+        description: código de identificação do produto
+      responses:
+        200:
+          description: search results matching criteria
+          schema:
+            $ref: '#/definitions/StockItem'
+        401:
+          description: X-TOKEN-API-KEY inválido
+          schema:
+            $ref: '#/definitions/AuthenticationError'
+        404:
+          description: Quando o registro não foi encontrado
+          schema:
+            $ref: '#/definitions/RecordNotFound'
+definitions:
+  InvalidValue:
+    type: object
+    properties:
+      errors:
+        type: array
+        items:
+          type: object
+          properties:
+            msg:
+              type: string
+              example: "Invalid value"
+            param:
+              type: string
+              example: "desde"
+            location:
+              type: string
+              example: "body"
+  RecordNotFound:
+    type: object
+    properties:
+      error:
+        type: string
+        example: ''
+  StockItem:
+    type: object
+    properties:
+      meta:
+        $ref: '#/definitions/MetaInfo'
+      produtos:
+        type: array
+        items:
+          $ref: '#/definitions/StockProperties'
+  StockProperties:
+    type: object
+    properties:
+      prod_codigo:
+        type: integer
+        format: int32
+        example: 30
+      prod_referencia:
+        type: string
+        example: 30
+      dep_codigo:
+        type: integer
+        format: int32
+        example: 30
+      estoque:
+        type: number
+        format: float
+        example: 18.5
+  MetaInfo:
+    type: object
+    properties:
+      quantidadeDePaginas:
+        type: integer
+        example: 1
+      itensPorPagina:
+        type: integer
+        example: 1
+  AuthenticationError:
+    type: object
+    properties:
+      erro:
+        type: array
+        items:
+          type: string
+          example: Você precisa informar um X-TOKEN-API-KEY válido
