@@ -149,6 +149,43 @@ paths:
           schema:
             $ref: '#/definitions/InvalidPage'
 
+  /api/v1/produtos/{idDoProduto}:
+    get:
+      tags:
+      - Produtos identificado pelo seu código
+      summary: retorna um produto
+      operationId: searchProduct
+      description: Neste endpoint você irá receber os dados de um produto 
+      produces:
+      - application/json
+      parameters:
+      - in: header
+        name: X-TOKEN-API-KEY
+        type: string
+        minLength: 64
+        maxLength: 64
+        description: token de identificação do usuário (SHA256)
+        required: true
+      - in: path
+        name: idDoProduto
+        required: true
+        type: integer
+        format: int32
+        description: código de identificação do produto
+      responses:
+        200:
+          description: search results matching criteria
+          schema:
+            $ref: '#/definitions/ProductProperties'
+        401:
+          description: X-TOKEN-API-KEY inválido
+          schema:
+            $ref: '#/definitions/AuthenticationError'
+        404:
+          description: Quando o registro não foi encontrado
+          schema:
+            $ref: '#/definitions/RecordNotFound'
+
 definitions:
   InvalidValue:
     type: object
@@ -239,7 +276,7 @@ definitions:
       dep_codigo:
         type: integer
         format: int32
-        example: 30
+        example: 1
       prod_nome:
         type: string
         example: Camiseta lisa
