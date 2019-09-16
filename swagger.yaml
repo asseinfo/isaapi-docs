@@ -67,7 +67,7 @@ paths:
           description: search results matching criteria
           schema:
             $ref: '#/definitions/InvalidValue'
-  /api/v1/estoque/{idDoProduto}:
+  /api/v1/estoque/{idProduto}:
     get:
       tags:
       - Estoque
@@ -86,7 +86,7 @@ paths:
         description: token de identificação do usuário (SHA256)
         required: true
       - in: path
-        name: idDoProduto
+        name: idProduto
         required: true
         type: integer
         format: int32
