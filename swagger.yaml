@@ -15,7 +15,7 @@ tags:
   description: Chamadas para operações de estoque
 
 paths:
-  /api/v1/estoqu:
+  /api/v1/estoque:
     get:
       tags:
       - Estoque
