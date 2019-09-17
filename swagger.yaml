@@ -1,4 +1,4 @@
-swagger: '2.0'
+swagger: "2.0"
 info:
   description: API para integrar o ISA-ERP com o mundo
   version: 1.0.0
@@ -11,53 +11,55 @@ info:
     url: http://www.apache.org/licenses/LICENSE-2.0.html
 
 tags:
-- name: Estoque
-  description: Chamadas para operações de estoque
+  - name: Estoque
+    description: Chamadas para operações de estoque
+  - name: Produtos
+    description: Chamadas para operações de produtos
 
 paths:
   /api/v1/estoque:
     get:
       tags:
-      - Estoque
+        - Estoque
       summary: retorna a quantidade em estoque
       operationId: searchInventory
       description: |
         Neste endpoint você irá consultar os saldos de estoque que sofreram alteração desde a data/hora informada
       produces:
-      - application/json
+        - application/json
       parameters:
-      - in: header
-        name: X-TOKEN-API-KEY
-        type: string
-        minLength: 64
-        maxLength: 64
-        description: token de identificação do usuário (SHA256)
-        required: true
-      - in: query
-        name: desde
-        description: data no formato padrão do JSON (ISO9601)
-        required: true
-        type: string
-        format: ISO9601      
-      - in: query
-        name: ecommerce
-        description: informe true se quiser somente os itens de ecommerce
-        default: false
-        type: boolean
-        format: int32
-        minimum: 0
-      - in: query
-        name: limite
-        description: quantidade máxima que pode ser retornada
-        type: integer
-        format: int32
-        minimum: 0
-        maximum: 200
-      - in: query
-        name: pagina
-        description: número da página
-        type: integer
-        format: int32
+        - in: header
+          name: X-TOKEN-API-KEY
+          type: string
+          minLength: 64
+          maxLength: 64
+          description: token de identificação do usuário (SHA256)
+          required: true
+        - in: query
+          name: desde
+          description: data no formato padrão do JSON (ISO9601)
+          required: true
+          type: string
+          format: ISO9601
+        - in: query
+          name: ecommerce
+          description: informe true se quiser somente os itens de ecommerce
+          default: false
+          type: boolean
+          format: int32
+          minimum: 0
+        - in: query
+          name: limite
+          description: quantidade máxima que pode ser retornada
+          type: integer
+          format: int32
+          minimum: 0
+          maximum: 200
+        - in: query
+          name: pagina
+          description: número da página
+          type: integer
+          format: int32
       responses:
         200:
           description: search results matching criteria
@@ -65,41 +67,41 @@ paths:
             type: object
             properties:
               meta:
-                $ref: '#/definitions/MetaInfo'
+                $ref: "#/definitions/MetaInfo"
               produtos:
-                $ref: '#/definitions/StockProperties'
-            
+                $ref: "#/definitions/StockProperties"
+
         422:
           description: search results matching criteria
           schema:
-            $ref: '#/definitions/InvalidValue'
+            $ref: "#/definitions/InvalidValue"
   /api/v1/estoque/{codigo_ou_referencia}/{identificador}:
     get:
       tags:
-      - Estoque
+        - Estoque
       summary: retorna a quantidade em estoque
       operationId: searchInventoryID
       description: |
         Neste endpoint você irá consultar o saldo em estoque do produto solicitado
       produces:
-      - application/json
+        - application/json
       parameters:
-      - in: header
-        name: X-TOKEN-API-KEY
-        type: string
-        description: token de identificação do usuário (SHA256)
-        required: true
-      - in: path
-        name: codigo_ou_referencia
-        required: true
-        type: string
-        enum: [prod_codigo, prod_referencia]
-        description: campo utilizado como identificador
-      - in: path
-        name: identificador
-        required: true
-        type: string
-        description: código de identificação do produto
+        - in: header
+          name: X-TOKEN-API-KEY
+          type: string
+          description: token de identificação do usuário (SHA256)
+          required: true
+        - in: path
+          name: codigo_ou_referencia
+          required: true
+          type: string
+          enum: [prod_codigo, prod_referencia]
+          description: campo utilizado como identificador
+        - in: path
+          name: identificador
+          required: true
+          type: string
+          description: código de identificação do produto
       responses:
         200:
           description: search results matching criteria
@@ -107,19 +109,119 @@ paths:
             type: object
             properties:
               meta:
-                $ref: '#/definitions/MetaInfo'
+                $ref: "#/definitions/MetaInfo"
               produtos:
                 type: array
                 items:
-                  $ref: '#/definitions/StockProperties'
+                  $ref: "#/definitions/StockProperties"
         401:
           description: X-TOKEN-API-KEY inválido
           schema:
-            $ref: '#/definitions/AuthenticationError'
+            $ref: "#/definitions/AuthenticationError"
         404:
           description: Quando o registro não foi encontrado
           schema:
-            $ref: '#/definitions/RecordNotFound'
+            $ref: "#/definitions/RecordNotFound"
+
+  /api/v1/produtos:
+    get:
+      tags:
+        - Produtos
+      summary: retorna os produtos
+      operationId: searchProducts
+      description: |
+        Neste endpoint você irá consultar uma lista de produtos
+      produces:
+        - application/json
+      parameters:
+        - in: header
+          name: X-TOKEN-API-KEY
+          type: string
+          minLength: 64
+          maxLength: 64
+          description: token de identificação do usuário (SHA256)
+          required: true
+        - in: query
+          name: pagina
+          description: Número dá página
+          type: integer
+          format: int32
+          minimum: 1
+        - in: query
+          name: limite
+          description: quantidade máxima que pode ser retornada
+          type: integer
+          format: int32
+          minimum: 1
+          maximum: 200
+      responses:
+        200:
+        200:
+          description: search results matching criteria
+          schema:
+            type: object
+            properties:
+              meta:
+                $ref: "#/definitions/MetaInfo"
+              produtos:
+                $ref: "#/definitions/ProductProperties"
+        401:
+          description: X-TOKEN-API-KEY inválido
+          schema:
+            $ref: "#/definitions/AuthenticationError"
+        422:
+          description: search results matching criteria
+          schema:
+            $ref: "#/definitions/InvalidPage"
+
+  /api/v1/produtos/{codigo_ou_referencia}/{identificador}:
+    get:
+      tags:
+        - Produtos
+      summary: retorna um produto
+      operationId: searchProduct
+      description: |
+        Neste endpoint você irá consultar os dados de um produto
+      produces:
+        - application/json
+      parameters:
+        - in: header
+          name: X-TOKEN-API-KEY
+          type: string
+          description: token de identificação do usuário (SHA256)
+          required: true
+        - in: path
+          name: codigo_ou_referencia
+          required: true
+          type: string
+          enum: [prod_codigo, prod_referencia]
+          description: campo utilizado como identificador
+        - in: path
+          name: identificador
+          required: true
+          type: string
+          description: código de identificação do produto
+      responses:
+        200:
+          description: search results matching criteria
+          schema:
+            type: object
+            properties:
+              meta:
+                $ref: "#/definitions/MetaInfo"
+              produtos:
+                type: array
+                items:
+                  $ref: "#/definitions/ProductProperties"
+        401:
+          description: X-TOKEN-API-KEY inválido
+          schema:
+            $ref: "#/definitions/AuthenticationError"
+        404:
+          description: Quando o registro não foi encontrado
+          schema:
+            $ref: "#/definitions/RecordNotFound"
+
 definitions:
   InvalidValue:
     type: object
@@ -143,7 +245,7 @@ definitions:
     properties:
       error:
         type: string
-        example: 'Registro não'
+        example: "Registro não encontrado"
   AuthenticationError:
     type: object
     properties:
@@ -179,3 +281,62 @@ definitions:
       itensPorPagina:
         type: integer
         example: 20
+  ProductProperties:
+    type: object
+    properties:
+      prod_codigo:
+        type: integer
+        format: int32
+        example: 30
+      prod_referencia:
+        type: string
+        example: 30
+      dep_codigo:
+        type: integer
+        format: int32
+        example: 1
+      prod_nome:
+        type: string
+        example: Camiseta lisa
+      preco:
+        type: number
+        format: float
+        example: 49.99
+      marc_nome:
+        type: string
+        example: DZARM
+      fab_nome:
+        type: string
+        example: Hering
+      prod_pesobruto:
+        type: number
+        format: float
+        example: 0.250
+      prod_pesoliquido:
+        type: number
+        format: float
+        example: 0.150
+      tip_nome:
+        type: string
+        example: VERÃO 2019/2020
+      prod_alt_tempo:
+        type: string
+        format: ISO9601
+        example: 2019-09-16T12:06:00.000Z
+  InvalidPage:
+    type: object
+    properties:
+      errors:
+        type: array
+        items:
+          type: object
+          properties:
+            msg:
+              type: string
+              example: "Invalid page"
+            param:
+              type: string
+              example: "pagina"
+            location:
+              type: string
+              example: "body"
