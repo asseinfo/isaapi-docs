@@ -13,6 +13,8 @@ info:
 tags:
 - name: Estoque
   description: Chamadas para operações de estoque
+- name: Produtos
+  description: Chamadas para operações de produtos
 
 paths:
   /api/v1/estoque:
@@ -120,11 +122,11 @@ paths:
   
   /api/v1/produtos:
     get:
-      tags:
-      - Produtos identificados pelos seus códigos de identificação
+      tags: 
+      - Produtos
       summary: retorna os produtos
       operationId: searchProducts
-      description: Neste endpoint você irá receber uma lista de produtos 
+      description: Neste endpoint você irá consultar uma lista de produtos 
       produces:
       - application/json
       parameters:
@@ -162,13 +164,13 @@ paths:
           schema:
             $ref: '#/definitions/InvalidPage'
 
-  /api/v1/produtos/{idDoProduto}:
+  /api/v1/produtos/{idProduto}:
     get:
       tags:
-      - Produtos identificado pelo seu código
+      - Produtos
       summary: retorna um produto
       operationId: searchProduct
-      description: Neste endpoint você irá receber os dados de um produto 
+      description: Neste endpoint você irá consultar os dados de um produto 
       produces:
       - application/json
       parameters:
@@ -180,7 +182,7 @@ paths:
         description: token de identificação do usuário (SHA256)
         required: true
       - in: path
-        name: idDoProduto
+        name: idProduto
         required: true
         type: integer
         format: int32
