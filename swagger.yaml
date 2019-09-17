@@ -18,11 +18,11 @@ paths:
   /api/v1/estoque:
     get:
       tags:
-      - Estoque a partir da data informada
+      - Estoque
       summary: retorna a quantidade em estoque
       operationId: searchInventory
       description: |
-        Neste endpoint você irá receber os saldos de estoque que sofreram alteração desde a data/hora informada
+        Neste endpoint você irá consultar os saldos de estoque que sofreram alteração desde a data/hora informada
       produces:
       - application/json
       parameters:
@@ -41,7 +41,7 @@ paths:
         format: ISO9601      
       - in: query
         name: ecommerce
-        description: irme true se quiser somente os itens de ecommerce
+        description: informe true se quiser somente os itens de ecommerce
         default: false
         type: boolean
         format: int32
@@ -62,19 +62,25 @@ paths:
         200:
           description: search results matching criteria
           schema:
-            $ref: '#/definitions/StockItem'
+            type: object
+            properties:
+              meta:
+                $ref: '#/definitions/MetaInfo'
+              produtos:
+                $ref: '#/definitions/StockProperties'
+            
         422:
           description: search results matching criteria
           schema:
             $ref: '#/definitions/InvalidValue'
-  /api/v1/estoque/{idDoProduto}:
+  /api/v1/estoque/{idProduto}:
     get:
       tags:
-      - Estoque de um produto identificado pelo seu código de identificação
+      - Estoque
       summary: retorna a quantidade em estoque
       operationId: searchInventoryID
       description: |
-        Neste endpoint você irá receber o saldo em estoque do produto solicitado
+        Neste endpoint você irá consultar o saldo em estoque do produto solicitado
       produces:
       - application/json
       parameters:
@@ -86,7 +92,7 @@ paths:
         description: token de identificação do usuário (SHA256)
         required: true
       - in: path
-        name: idDoProduto
+        name: idProduto
         required: true
         type: integer
         format: int32
@@ -95,7 +101,14 @@ paths:
         200:
           description: search results matching criteria
           schema:
-            $ref: '#/definitions/StockItem'
+            type: object
+            properties:
+              meta:
+                $ref: '#/definitions/MetaInfo'
+              produtos:
+                type: array
+                items:
+                  $ref: '#/definitions/StockProperties'
         401:
           description: X-TOKEN-API-KEY inválido
           schema:
@@ -210,15 +223,6 @@ definitions:
       error:
         type: string
         example: ''
-  StockItem:
-    type: object
-    properties:
-      meta:
-        $ref: '#/definitions/MetaInfo'
-      produtos:
-        type: array
-        items:
-          $ref: '#/definitions/StockProperties'
   StockProperties:
     type: object
     properties:
@@ -232,7 +236,7 @@ definitions:
       dep_codigo:
         type: integer
         format: int32
-        example: 30
+        example: 1
       estoque:
         type: number
         format: float
@@ -245,7 +249,7 @@ definitions:
         example: 1
       itensPorPagina:
         type: integer
-        example: 1
+        example: 20
   AuthenticationError:
     type: object
     properties:
