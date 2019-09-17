@@ -75,7 +75,7 @@ paths:
           description: search results matching criteria
           schema:
             $ref: '#/definitions/InvalidValue'
-  /api/v1/estoque/{idProduto}:
+  /api/v1/estoque/{codigo_ou_referencia}/{identificador}:
     get:
       tags:
       - Estoque
@@ -89,15 +89,18 @@ paths:
       - in: header
         name: X-TOKEN-API-KEY
         type: string
-        minLength: 64
-        maxLength: 64
         description: token de identificação do usuário (SHA256)
         required: true
       - in: path
-        name: idProduto
+        name: codigo_ou_referencia
         required: true
-        type: integer
-        format: int32
+        type: string
+        enum: [prod_codigo, prod_referencia]
+        description: campo utilizado como identificador
+      - in: path
+        name: identificador
+        required: true
+        type: string
         description: código de identificação do produto
       responses:
         200:
@@ -224,7 +227,15 @@ definitions:
     properties:
       error:
         type: string
-        example: ''
+        example: 'Registro não'
+  AuthenticationError:
+    type: object
+    properties:
+      erro:
+        type: array
+        items:
+          type: string
+          example: Você precisa informar um X-TOKEN-API-KEY válido
   StockProperties:
     type: object
     properties:
@@ -252,14 +263,6 @@ definitions:
       itensPorPagina:
         type: integer
         example: 20
-  AuthenticationError:
-    type: object
-    properties:
-      erro:
-        type: array
-        items:
-          type: string
-          example: Você precisa informar um X-TOKEN-API-KEY válido
   ProductItem:
     type: object
     properties:
