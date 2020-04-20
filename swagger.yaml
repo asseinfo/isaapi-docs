@@ -156,7 +156,6 @@ paths:
           maximum: 200
       responses:
         200:
-        200:
           description: search results matching criteria
           schema:
             type: object
